@@ -1,0 +1,50 @@
+<template>
+  <div>
+   <h1>Welcome to Corporate Panda</h1>
+  
+     <nav class="navbar navbar-expand-lg navbar-light bg-light">
+       <div class="centerNav">
+  <router-link to="/" class="navbar-brand" href="/">Home</router-link>
+  <div class="collapse navbar-collapse" id="navbarNav">
+    <ul class="navbar-nav">
+       <template v-if="authentication">
+      <li class="nav-item">
+        <router-link to="/logout" class="nav-link" href="/logout">Logout</router-link>
+      </li>
+       </template>
+       <template v-else>
+      <li class="nav-item">
+        <router-link to="/login" class="nav-link" href="/login">Login <span class="sr-only">(current)</span></router-link>
+      </li>
+      <li class="nav-item">
+        <router-link to="/register" class="nav-link" href="/register">Register</router-link>
+      </li>
+      </template>
+    </ul>
+  </div>
+  </div>
+  </nav>
+  
+  </div>
+</template>
+
+<script>
+   export default {
+  name: '',
+  methods: {
+      
+    },
+    computed: {
+     
+    },
+    mounted(){
+      
+    }
+}
+</script>
+
+<style scoped>
+.centerNav{
+  margin: auto;
+}
+</style>
