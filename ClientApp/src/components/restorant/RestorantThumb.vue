@@ -11,7 +11,10 @@
   methods: {
       getRestorant(event){
           this.$store.dispatch('getSingleRestaurant',"https://www.foodpanda.bg" + event.target.id)
-          // this.$router.push({path:'/singleRestorant'});
+          let targetRest = this.$store.state.restaurants.filter(r => r.url == event.target.id);
+          console.log(targetRest)
+          this.$store.commit('singleRestaurantName',targetRest[0]['name'])
+          this.$router.push({path:'/showRestaurant'});
       }
     },
     props:['restaurant','index'],

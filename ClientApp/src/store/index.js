@@ -14,7 +14,8 @@ export default new Vuex.Store({
     username: "",
     authtoken: "",
     restaurants: [],
-    products: []
+    products: [],
+    singleRestaurantName:""
   },
   getters: {
     counter(state) {
@@ -62,6 +63,9 @@ export default new Vuex.Store({
     },
     products: function (state, payload) {
       state.products = payload;
+    },
+    singleRestaurantName:function(state,payload){
+      state.singleRestaurantName = payload;
     }
   }, actions: {
     inrementAction({ commit }, payload) {
@@ -79,7 +83,6 @@ export default new Vuex.Store({
     getVarnaRestaurants({ commit }, payload) {
       axios.get('https://www.foodpanda.bg/en/city/varna?r=1')
         .then(res => {
-
           let ul = res.data.match(/<ul class="vendor-list ".+<\/ul>/gms);
           var myRegexp = /<li>.+?<\/li>/gms,
             result;
@@ -101,7 +104,7 @@ export default new Vuex.Store({
         });
     },
     getSingleRestaurant(instance, payload) {
-      axios
+         axios
         .get(payload)
         .then(res => {
           let regex = /<ul class="dish-list".+?<\/ul>/gms, ul;
@@ -121,9 +124,9 @@ export default new Vuex.Store({
               }
             }
           }
-          console.log(products)
           instance.commit('products', products);
-        })
+          console.log(instance.state.products)
+        });
     }
   }
 })
