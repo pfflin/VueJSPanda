@@ -29,7 +29,6 @@ export const registerUser = {
 
     methods:{
         register: function(){
-            console.log(this.username,this.password)
             const authString = btoa(`${this.appKey}:${this.appSecret}`);
             const url = `https://baas.kinvey.com/user/${this.appKey}`;
             const headers = {
