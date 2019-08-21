@@ -15,7 +15,8 @@ export default new Vuex.Store({
     authtoken: "",
     restaurants: [],
     products: [],
-    singleRestaurantName:""
+    singleRestaurantName:"",
+    cart:[]
   },
   getters: {
     counter(state) {
@@ -38,6 +39,17 @@ export default new Vuex.Store({
     },
     username(state) {
       return state.username;
+    },
+    cartTotalSum(state){
+      if (state.cart.length == 0) {
+        return 0;
+      } else {
+        let sum = 0;
+        state.cart.forEach(element => {
+          sum += element["productPrice"];
+        });
+        return sum;
+      }
     }
   }, mutations: {
     incrementCounter(state, payload) {
@@ -66,6 +78,8 @@ export default new Vuex.Store({
     },
     singleRestaurantName:function(state,payload){
       state.singleRestaurantName = payload;
+    },cart:function(state, payload){
+      state.cart = payload;
     }
   }, actions: {
     inrementAction({ commit }, payload) {
@@ -118,14 +132,14 @@ export default new Vuex.Store({
                   src: productArr[1].trim(),
                   name: productArr[2].trim(),
                   desc: productArr[3].trim(),
-                  price: productArr[4].trim()
+                  price: Number(productArr[4].replace("BGN","").replace('from',"").trim())
                 };
                 products.push(ob);
               }
             }
           }
+          console.log(products)
           instance.commit('products', products);
-          console.log(instance.state.products)
         });
     }
   }

@@ -1,7 +1,7 @@
 <template>
-  <div>
-   <h1 :v-html="singleRestaurantName">{{singleRestaurantName}}</h1>
-   <Product v-for="(product, index) in products" :product="product" :key="index"></Product>
+  <div class="wrapper">
+   <h1 v-html="singleRestaurantName"></h1>
+   <Product v-for="(product, index) in products" :product="product" :index="index" :key="index"></Product>
   </div>
 </template>
 
@@ -19,7 +19,6 @@ import Product from './Product'
             return this.$store.state.products
         },
         singleRestaurantName: function(){
-          console.log(this.$store.state)
           return this.$store.state.singleRestaurantName;
         }
     },
