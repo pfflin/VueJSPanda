@@ -1,5 +1,6 @@
 <template>
   <div>
+    
     <h1>Welcome to Corporate Panda</h1>
 
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
@@ -10,6 +11,9 @@
             <template v-if="authentication">
               <li class="nav-item">
                 <router-link to="/logout" class="nav-link" href="/logout">Logout</router-link>
+              </li>
+              <li class="nav-item">
+                <router-link to="/myOrder" class="nav-link" href="/myOrder">My Order</router-link>
               </li>
             </template>
             <template v-else>
@@ -31,6 +35,7 @@
         <img class="cartSide" src="/cart.png" />
       </router-link>
     </nav>
+    
   </div>
 </template>
 

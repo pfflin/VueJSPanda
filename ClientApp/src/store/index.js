@@ -16,7 +16,10 @@ export default new Vuex.Store({
     restaurants: [],
     products: [],
     singleRestaurantName:"",
-    cart:[]
+    cart:[],
+    time:"",
+    loader:true,
+    myOrder:[]
   },
   getters: {
     counter(state) {
@@ -50,7 +53,16 @@ export default new Vuex.Store({
         });
         return sum;
       }
+    },
+    today(state){
+      let today = new Date();
+      let dd = String(today.getDate()).padStart(2, '0');
+      let mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
+      let yyyy = today.getFullYear();
+
+      return mm + '/' + dd + '/' + yyyy;
     }
+
   }, mutations: {
     incrementCounter(state, payload) {
       state.count += payload
@@ -78,8 +90,18 @@ export default new Vuex.Store({
     },
     singleRestaurantName:function(state,payload){
       state.singleRestaurantName = payload;
-    },cart:function(state, payload){
+    },
+    cart:function(state, payload){
       state.cart = payload;
+    },
+    time:function(state,payload){
+      state.time = payload;
+    },
+    loader:function(state, payload){
+      state.loader = payload;
+    },
+    myOrder:function(state,payload){
+      state.myOrder = payload;
     }
   }, actions: {
     inrementAction({ commit }, payload) {
@@ -95,29 +117,38 @@ export default new Vuex.Store({
         })
     },
     getVarnaRestaurants({ commit }, payload) {
-      axios.get('https://www.foodpanda.bg/en/city/varna?r=1')
-        .then(res => {
-          let ul = res.data.match(/<ul class="vendor-list ".+<\/ul>/gms);
-          var myRegexp = /<li>.+?<\/li>/gms,
-            result;
-          let nameRegex = /href="(.+?)".+src="(.+?)".+?span class="name fn">(.+?)<\/span>/gms;
-          let arrayWithShit;
-          let restaurants = [];
-          while ((result = myRegexp.exec(ul))) {
-            if (result[0].match(nameRegex)) {
-              arrayWithShit = nameRegex.exec(result[0]);
-
-              restaurants.push({
-                url: arrayWithShit[1],
-                imgSrc: arrayWithShit[2],
-                name: arrayWithShit[3]
-              });
+      return new Promise(function(resolve,reject){
+        commit('loader',true);
+        axios.get('https://www.foodpanda.bg/en/city/varna?r=1')
+          .then(res => {
+            let ul = res.data.match(/<ul class="vendor-list ".+<\/ul>/gms);
+            var myRegexp = /<li>.+?<\/li>/gms,
+              result;
+            let nameRegex = /href="(.+?)".+src="(.+?)".+?span class="name fn">(.+?)<\/span>/gms;
+            let arrayWithShit;
+            let restaurants = [];
+            while ((result = myRegexp.exec(ul))) {
+              if (result[0].match(nameRegex)) {
+                arrayWithShit = nameRegex.exec(result[0]);
+  
+                restaurants.push({
+                  url: arrayWithShit[1],
+                  imgSrc: arrayWithShit[2],
+                  name: arrayWithShit[3],
+                  orders:0
+                });
+              }
             }
-          }
-          commit('restaurants', restaurants)
+            commit('loader', false);
+            commit('restaurants', restaurants);
+            console.log('endFunc')
+            resolve("ready")
+      })
+      
         });
     },
     getSingleRestaurant(instance, payload) {
+      instance.commit('loader', true)
          axios
         .get(payload)
         .then(res => {
@@ -139,8 +170,52 @@ export default new Vuex.Store({
             }
           }
           console.log(products)
+          instance.commit('loader', false)
           instance.commit('products', products);
         });
+    },
+    getOrders(instance,payload){
+     const headers = {
+        'Authorization': 'Kinvey ' + instance.state.authtoken,
+        'Content-Type': 'application/json'
+    }      
+      axios
+        .get(`https://baas.kinvey.com/appdata/${instance.state.appKey}/orders/?query={"dateAdded":"${instance.getters.today}"}`, {headers:{'Authorization': 'Kinvey ' + instance.state.authtoken}})
+        .then(res => {
+         for( var restaurant of instance.state.restaurants){
+           for(var order of res['data']){
+             if(order['restorant'] == restaurant['name']){
+               restaurant['orders']++;
+             }
+           }
+         }
+          console.log(res)
+        }); 
+    },
+    makeOrder(instance, payload){
+      instance.commit('loader', true);
+      axios
+       .post(`https://baas.kinvey.com/appdata/${instance.state.appKey}/orders`,{
+        "user": instance.state.username,
+        "product": instance.state.cart,
+        "restorant": instance.state.singleRestaurantName,
+        "dateAdded": instance.getters.today
+        }, {headers:{'Authorization': 'Kinvey ' + instance.state.authtoken}})
+      .then(r => {
+        instance.commit('loader', false);
+      })  
+    },
+    getMyOrder(instance,payload){
+      const headers = {
+        'Authorization': 'Kinvey ' + instance.state.authtoken,
+        'Content-Type': 'application/json'
+    }      
+      axios
+        .get(`https://baas.kinvey.com/appdata/${instance.state.appKey}/orders/?query={"dateAdded":"${instance.getters.today}","user":"${instance.state.username}"}`, {headers:{'Authorization': 'Kinvey ' + instance.state.authtoken}})
+        .then(res => {
+          instance.commit('myOrder',res.data)
+          console.log(res.data)
+        }); 
     }
   }
 })

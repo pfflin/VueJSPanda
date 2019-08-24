@@ -6,7 +6,7 @@
       Restaurant:{{item.restorant}}, Item:{{item.productName}}, Price {{item.productPrice}} BGN
    </div>
    <h3>Total : {{totalPrice}} BGN</h3>
-   <input type="button" value="Checkout ?">
+   <input @click="makeOrder()" type="button" value="Complete Order">
   </div>
 </template>
 
@@ -14,7 +14,10 @@
    export default {
   name: '',
   methods: {
-      
+      makeOrder(){
+         this.$store.dispatch('makeOrder');
+         console.log('ordered')
+      }
     },
     computed: {
      cart:function(){

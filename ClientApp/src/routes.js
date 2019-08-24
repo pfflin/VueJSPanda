@@ -4,6 +4,7 @@ import Register from './components/Register'
 import Logout from './components/Logout'
 import Restaurant from './components/restorant/SingleRestorant'
 import Checkout from './components/restorant/Checkout'
+import myOrder from './components/restorant/Order'
 
 export const routes = [
     {path:'/', component:Home},
@@ -11,5 +12,6 @@ export const routes = [
     {path:'/register', component:Register},
     {path:'/logout', component:Logout},
     {path:'/showRestaurant', component:Restaurant},
-    {path:'/checkout', component:Checkout}
+    {path:'/checkout', component:Checkout},
+    {path:'/myOrder', component:myOrder}
 ];

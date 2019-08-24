@@ -16,6 +16,11 @@ export const authService = {
             console.log('enter')
             console.log(this.$store.state.authtoken)
             if(this.$store.state.authtoken !== "" || localStorage.getItem('authtoken') !== null){
+                if(!this.$store.state.authtoken || !this.$store.state.username){
+                    this.$store.commit('username', localStorage.getItem('username'));
+                    this.$store.commit('authtoken', localStorage.getItem('authtoken'));
+                }
+
                 return true;
             }
             else{

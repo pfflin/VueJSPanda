@@ -25,7 +25,11 @@ export default {
   },
   mounted() {
     let that = this;
-    this.$store.dispatch('getVarnaRestaurants');
+    this.$store.dispatch('getVarnaRestaurants')
+    .then(r => {
+      console.log(r)
+      this.$store.dispatch('getOrders')
+    });
    
     //chrome.exe --user-data-dir="C:/Chrome dev session" --disable-web-security
   }

@@ -37,10 +37,10 @@
         .then(res=>res.json())
         .then(data=>{
             if(data._kmd.authtoken){
-                console.log(data)
                 if(data._kmd){
                     this.$store.commit('authtoken',data._kmd.authtoken)
                   localStorage.setItem('authtoken',data._kmd.authtoken);
+                  localStorage.setItem('username',this.$store.state.username);
                   this.$router.push({path:'/'});
                 }
             }

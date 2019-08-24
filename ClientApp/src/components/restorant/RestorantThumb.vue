@@ -2,6 +2,7 @@
   <div  class="thumb">
         <h2 class="blockEl" v-html="restaurant.name"></h2>
         <div ><img :id="restaurant.url" v-on:click.self="getRestorant($event)" class="thumbImg" :src="restaurant.imgSrc"></div>
+        <div>{{restaurant.orders}}</div>
   </div>
 </template>
 
