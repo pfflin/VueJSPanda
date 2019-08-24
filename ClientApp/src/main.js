@@ -4,7 +4,7 @@ import Vuex from 'vuex'
 import { store } from './store'
 import axios from 'axios'
 import VueRouter from 'vue-router'
-import {routes} from './routes'
+import {router} from './routes'
 import BootstrapVue from 'bootstrap-vue';
 import Vuelidate from 'vuelidate'
 import {authService} from './services/authServices';
@@ -18,10 +18,7 @@ Vue.use(Vuex)
 Vue.use(Vuelidate)
 Vue.use(BootstrapVue);
 Vue.mixin(authService);
-const router = new VueRouter({
-  mode: 'history',
-  routes
-})
+
 
 new Vue({
   store,

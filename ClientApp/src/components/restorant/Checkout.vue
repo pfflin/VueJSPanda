@@ -1,7 +1,7 @@
 <template>
   <div>
    <h1>CheckOut</h1>
-   <div>Your order is:</div>
+   <div>Confirm that this is your order :</div>
    <div v-for="(item,index) in cart" :key="index">
       Restaurant:{{item.restorant}}, Item:{{item.productName}}, Price {{item.productPrice}} BGN
    </div>
@@ -16,7 +16,8 @@
   methods: {
       makeOrder(){
          this.$store.dispatch('makeOrder');
-         console.log('ordered')
+         console.log('ordered');
+         
       }
     },
     computed: {

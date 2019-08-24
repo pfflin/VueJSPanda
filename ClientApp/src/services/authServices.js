@@ -1,8 +1,13 @@
 const loginUser = function(username,authtoken) {
     localStorage.setItem('username', username);
     localStorage.setItem('authtoken',authtoken);
-
 }
+export const isAuthenticated = (()=>{
+    console.log(localStorage.getItem('authtoken'))
+    return localStorage.getItem('authtoken') !== null
+})();   
+
+
 
 export const authService = {
     methods:{
@@ -13,8 +18,6 @@ export const authService = {
     }
     ,computed:{
         authentication: function(){
-            console.log('enter')
-            console.log(this.$store.state.authtoken)
             if(this.$store.state.authtoken !== "" || localStorage.getItem('authtoken') !== null){
                 if(!this.$store.state.authtoken || !this.$store.state.username){
                     this.$store.commit('username', localStorage.getItem('username'));

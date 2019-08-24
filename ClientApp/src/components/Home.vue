@@ -27,7 +27,6 @@ export default {
     let that = this;
     this.$store.dispatch('getVarnaRestaurants')
     .then(r => {
-      console.log(r)
       this.$store.dispatch('getOrders')
     });
    

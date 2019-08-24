@@ -20,34 +20,11 @@
   name: 'login',
   methods: {
       login(){
-            const authString = btoa(`${this.username}:${this.password}`);
-          const url = `https://baas.kinvey.com/user/${this.$store.getters.appKey}/login`;
-          const headers = {
-            method:'POST',  
-            body: JSON.stringify({
-               username: this.username,
-               password: this.password
-            }),
-            headers: {
-                Authorization: `Basic ${authString}`,
-                'Content-Type': 'application/json'
-            }
-        }
-        fetch(url,headers)
-        .then(res=>res.json())
-        .then(data=>{
-            if(data._kmd.authtoken){
-                if(data._kmd){
-                    this.$store.commit('authtoken',data._kmd.authtoken)
-                  localStorage.setItem('authtoken',data._kmd.authtoken);
-                  localStorage.setItem('username',this.$store.state.username);
-                  this.$router.push({path:'/'});
-                }
-            }
-            else{
-                console.log('error')
-            } 
-        });
+             this.$store.dispatch('login')
+             .then(r => {
+                 console.log(r)
+                 this.$router.push({path:'/home'})
+             })
       }
     },
     computed: {
@@ -69,6 +46,7 @@
         }
     },
     mounted(){
+        this.$store.commit('loader', false)
     }
 }
 </script>

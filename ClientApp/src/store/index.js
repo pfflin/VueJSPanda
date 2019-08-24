@@ -104,18 +104,6 @@ export default new Vuex.Store({
       state.myOrder = payload;
     }
   }, actions: {
-    inrementAction({ commit }, payload) {
-      commit('incrementCounter', payload)
-    },
-    getInfo({ commit }, payload) {
-      const baseURI = 'https://www.foodpanda.bg/'
-      console.log('here')
-      axios.get(baseURI)
-        .then((result) => {
-          console.log(result)
-
-        })
-    },
     getVarnaRestaurants({ commit }, payload) {
       return new Promise(function(resolve,reject){
         commit('loader',true);
@@ -141,7 +129,6 @@ export default new Vuex.Store({
             }
             commit('loader', false);
             commit('restaurants', restaurants);
-            console.log('endFunc')
             resolve("ready")
       })
       
@@ -169,7 +156,6 @@ export default new Vuex.Store({
               }
             }
           }
-          console.log(products)
           instance.commit('loader', false)
           instance.commit('products', products);
         });
@@ -189,7 +175,6 @@ export default new Vuex.Store({
              }
            }
          }
-          console.log(res)
         }); 
     },
     makeOrder(instance, payload){
@@ -203,6 +188,7 @@ export default new Vuex.Store({
         }, {headers:{'Authorization': 'Kinvey ' + instance.state.authtoken}})
       .then(r => {
         instance.commit('loader', false);
+        instance.commit('cart', [])
       })  
     },
     getMyOrder(instance,payload){
@@ -213,9 +199,41 @@ export default new Vuex.Store({
       axios
         .get(`https://baas.kinvey.com/appdata/${instance.state.appKey}/orders/?query={"dateAdded":"${instance.getters.today}","user":"${instance.state.username}"}`, {headers:{'Authorization': 'Kinvey ' + instance.state.authtoken}})
         .then(res => {
-          instance.commit('myOrder',res.data)
-          console.log(res.data)
+          instance.commit('myOrder',res.data);
         }); 
+    },
+    login(instance,payload){
+      instance.commit('loader', true)
+      return new Promise(function(resolve,reject){
+      const authString = btoa(`${instance.state.username}:${instance.state.password}`);
+             const url = `https://baas.kinvey.com/user/${instance.getters.appKey}/login`;
+             const headers = {
+             method:'POST',  
+             body: JSON.stringify({
+               username: instance.state.username,
+               password: instance.state.password
+            }),
+            headers: {
+                Authorization: `Basic ${authString}`,
+                'Content-Type': 'application/json'
+            }
+        }
+        fetch(url,headers)
+        .then(res=>res.json())
+        .then(data=>{
+            if(data._kmd.authtoken){
+                if(data._kmd){
+                    instance.commit('authtoken',data._kmd.authtoken)
+                  localStorage.setItem('authtoken',data._kmd.authtoken);
+                  localStorage.setItem('username',instance.state.username); 
+                  resolve('ready')
+                }
+            }
+            else{
+              reject('wrong user')
+            } 
+        })
+      })
     }
   }
 })
