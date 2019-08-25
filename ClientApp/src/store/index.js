@@ -15,11 +15,11 @@ export default new Vuex.Store({
     authtoken: "",
     restaurants: [],
     products: [],
-    singleRestaurantName:"",
-    cart:[],
-    time:"",
-    loader:true,
-    myOrder:[]
+    singleRestaurantName: "",
+    cart: [],
+    time: "",
+    loader: true,
+    myOrder: []
   },
   getters: {
     counter(state) {
@@ -43,7 +43,7 @@ export default new Vuex.Store({
     username(state) {
       return state.username;
     },
-    cartTotalSum(state){
+    cartTotalSum(state) {
       if (state.cart.length == 0) {
         return 0;
       } else {
@@ -54,7 +54,7 @@ export default new Vuex.Store({
         return sum;
       }
     },
-    today(state){
+    today(state) {
       let today = new Date();
       let dd = String(today.getDate()).padStart(2, '0');
       let mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
@@ -63,7 +63,8 @@ export default new Vuex.Store({
       return mm + '/' + dd + '/' + yyyy;
     }
 
-  }, mutations: {
+  },
+  mutations: {
     incrementCounter(state, payload) {
       state.count += payload
     },
@@ -88,25 +89,26 @@ export default new Vuex.Store({
     products: function (state, payload) {
       state.products = payload;
     },
-    singleRestaurantName:function(state,payload){
+    singleRestaurantName: function (state, payload) {
       state.singleRestaurantName = payload;
     },
-    cart:function(state, payload){
+    cart: function (state, payload) {
       state.cart = payload;
     },
-    time:function(state,payload){
+    time: function (state, payload) {
       state.time = payload;
     },
-    loader:function(state, payload){
+    loader: function (state, payload) {
       state.loader = payload;
     },
-    myOrder:function(state,payload){
+    myOrder: function (state, payload) {
       state.myOrder = payload;
     }
-  }, actions: {
+  },
+  actions: {
     getVarnaRestaurants({ commit }, payload) {
-      return new Promise(function(resolve,reject){
-        commit('loader',true);
+      return new Promise(function (resolve, reject) {
+        commit('loader', true);
         axios.get('https://www.foodpanda.bg/en/city/varna?r=1')
           .then(res => {
             let ul = res.data.match(/<ul class="vendor-list ".+<\/ul>/gms);
@@ -118,30 +120,30 @@ export default new Vuex.Store({
             while ((result = myRegexp.exec(ul))) {
               if (result[0].match(nameRegex)) {
                 arrayWithShit = nameRegex.exec(result[0]);
-  
+
                 restaurants.push({
                   url: arrayWithShit[1],
                   imgSrc: arrayWithShit[2],
                   name: arrayWithShit[3],
-                  orders:0
+                  orders: 0
                 });
               }
             }
             commit('loader', false);
             commit('restaurants', restaurants);
             resolve("ready")
-      })
-      
-        });
+          })
+
+      });
     },
     getSingleRestaurant(instance, payload) {
       instance.commit('loader', true)
-         axios
+      axios
         .get(payload)
         .then(res => {
           let regex = /<ul class="dish-list".+?<\/ul>/gms, ul;
           let myRegexp = /<li.+?<\/li>/gms, li;
-          let liRegex = /.+?src="(.+?)".+?<span>(.+?)<.+?dish-description e-description">(.+?)<.+?class="price p-price">(.+?)</gms,productArr
+          let liRegex = /.+?src="(.+?)".+?<span>(.+?)<.+?dish-description e-description">(.+?)<.+?class="price p-price">(.+?)</gms, productArr
           let products = [];
           while ((ul = regex.exec(res.data))) {
             while ((li = myRegexp.exec(ul[0]))) {
@@ -150,7 +152,7 @@ export default new Vuex.Store({
                   src: productArr[1].trim(),
                   name: productArr[2].trim(),
                   desc: productArr[3].trim(),
-                  price: Number(productArr[4].replace("BGN","").replace('from',"").trim())
+                  price: Number(productArr[4].replace("BGN", "").replace('from', "").trim())
                 };
                 products.push(ob);
               }
@@ -160,79 +162,81 @@ export default new Vuex.Store({
           instance.commit('products', products);
         });
     },
-    getOrders(instance,payload){
-     const headers = {
-        'Authorization': 'Kinvey ' + instance.state.authtoken,
-        'Content-Type': 'application/json'
-    }      
-      axios
-        .get(`https://baas.kinvey.com/appdata/${instance.state.appKey}/orders/?query={"dateAdded":"${instance.getters.today}"}`, {headers:{'Authorization': 'Kinvey ' + instance.state.authtoken}})
-        .then(res => {
-         for( var restaurant of instance.state.restaurants){
-           for(var order of res['data']){
-             if(order['restorant'] == restaurant['name']){
-               restaurant['orders']++;
-             }
-           }
-         }
-        }); 
-    },
-    makeOrder(instance, payload){
-      instance.commit('loader', true);
-      axios
-       .post(`https://baas.kinvey.com/appdata/${instance.state.appKey}/orders`,{
-        "user": instance.state.username,
-        "product": instance.state.cart,
-        "restorant": instance.state.singleRestaurantName,
-        "dateAdded": instance.getters.today
-        }, {headers:{'Authorization': 'Kinvey ' + instance.state.authtoken}})
-      .then(r => {
-        instance.commit('loader', false);
-        instance.commit('cart', [])
-      })  
-    },
-    getMyOrder(instance,payload){
+    getOrders(instance, payload) {
       const headers = {
         'Authorization': 'Kinvey ' + instance.state.authtoken,
         'Content-Type': 'application/json'
-    }      
+      }
       axios
-        .get(`https://baas.kinvey.com/appdata/${instance.state.appKey}/orders/?query={"dateAdded":"${instance.getters.today}","user":"${instance.state.username}"}`, {headers:{'Authorization': 'Kinvey ' + instance.state.authtoken}})
+        .get(`https://baas.kinvey.com/appdata/${instance.state.appKey}/orders/?query={"dateAdded":"${instance.getters.today}"}`, { headers: { 'Authorization': 'Kinvey ' + instance.state.authtoken } })
         .then(res => {
-          instance.commit('myOrder',res.data);
-        }); 
+          for (var restaurant of instance.state.restaurants) {
+            for (var order of res['data']) {
+              if (order['restorant'] == restaurant['name']) {
+                restaurant['orders']++;
+              }
+            }
+          }
+        });
     },
-    login(instance,payload){
-      instance.commit('loader', true)
-      return new Promise(function(resolve,reject){
-      const authString = btoa(`${instance.state.username}:${instance.state.password}`);
-             const url = `https://baas.kinvey.com/user/${instance.getters.appKey}/login`;
-             const headers = {
-             method:'POST',  
-             body: JSON.stringify({
-               username: instance.state.username,
-               password: instance.state.password
-            }),
-            headers: {
-                Authorization: `Basic ${authString}`,
-                'Content-Type': 'application/json'
-            }
-        }
-        fetch(url,headers)
-        .then(res=>res.json())
-        .then(data=>{
-            if(data._kmd.authtoken){
-                if(data._kmd){
-                    instance.commit('authtoken',data._kmd.authtoken)
-                  localStorage.setItem('authtoken',data._kmd.authtoken);
-                  localStorage.setItem('username',instance.state.username); 
-                  resolve('ready')
-                }
-            }
-            else{
-              reject('wrong user')
-            } 
+    makeOrder(instance, payload) {
+      instance.commit('loader', true);
+      axios
+        .post(`https://baas.kinvey.com/appdata/${instance.state.appKey}/orders`, {
+          "user": instance.state.username,
+          "product": instance.state.cart,
+          "restorant": instance.state.singleRestaurantName,
+          "dateAdded": instance.getters.today
+        }, { headers: { 'Authorization': 'Kinvey ' + instance.state.authtoken } })
+        .then(r => {
+          instance.commit('loader', false);
+          instance.commit('cart', [])
         })
+    },
+    getMyOrder(instance, payload) {
+      const headers = {
+        'Authorization': 'Kinvey ' + instance.state.authtoken,
+        'Content-Type': 'application/json'
+      }
+      axios
+        .get(`https://baas.kinvey.com/appdata/${instance.state.appKey}/orders/?query={"dateAdded":"${instance.getters.today}","user":"${instance.state.username}"}`, { headers: { 'Authorization': 'Kinvey ' + instance.state.authtoken } })
+        .then(res => {
+          instance.commit('myOrder', res.data);
+        });
+    },
+    login(instance, payload) {
+      instance.commit('loader', true)
+      return new Promise(function (resolve, reject) {
+        const authString = btoa(`${instance.state.username}:${instance.state.password}`);
+        const url = `https://baas.kinvey.com/user/${instance.getters.appKey}/login`;
+        const headers = {
+          method: 'POST',
+          body: JSON.stringify({
+            username: instance.state.username,
+            password: instance.state.password
+          }),
+          headers: {
+            Authorization: `Basic ${authString}`,
+            'Content-Type': 'application/json'
+          }
+        }
+        fetch(url, headers)
+          .then(res => {
+            console.log(res)
+            console.log('here');
+            res.json();
+          })
+          .then(data => {
+            if (data._kmd) {
+              instance.commit('authtoken', data._kmd.authtoken)
+              localStorage.setItem('authtoken', data._kmd.authtoken);
+              localStorage.setItem('username', instance.state.username);
+              resolve('ready')
+            }
+            else {
+              reject('wrong user')
+            }
+          })
       })
     }
   }

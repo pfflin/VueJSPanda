@@ -30,7 +30,7 @@
           </ul>
         </div>
       </div>
-      <router-link to="/checkout"  href="/register">
+      <router-link v-if="authentication" to="/checkout"  href="/register">
         <span class="cartNumber">{{price}} BGN</span>
         <img class="cartSide" src="/cart.png" />
       </router-link>

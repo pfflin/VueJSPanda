@@ -2,7 +2,7 @@
   <div  class="thumb">
         <h2 class="blockEl" v-html="restaurant.name"></h2>
         <div ><img :id="restaurant.url" v-on:click.self="getRestorant($event)" class="thumbImg" :src="restaurant.imgSrc"></div>
-        <div>{{restaurant.orders}}</div>
+        <div v-if="authentication">{{restaurant.orders}}</div>
   </div>
 </template>
 
@@ -18,7 +18,10 @@
           this.$router.push({path:'/showRestaurant'});
       }
     },
-    props:['restaurant','index'],
+    props:{
+      'restaurant':Object,
+      'index':Number
+      },
     computed: {
      
     },

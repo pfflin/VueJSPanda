@@ -1,39 +1,44 @@
 <template>
   <div>
+      <p  v-if="message" class="alert alert-danger">{{message}}</p>
       <form>
   <div class="form-group">
     <label for="username">Username</label>
     <input v-model.lazy="$v.username.$model" class="form-control" id="username" aria-describedby="emailHelp" placeholder="Enter Name">
-    <p v-if="$v.username.$error" class="alert alert-danger">Not valid Email</p>
+    <p v-if="$v.username.$error" class="alert alert-danger">Not valid Username</p>
   </div>
   <div class="form-group">
     <label for="exampleInputPassword1">Password</label>
     <input type="password" v-model="$v.password.$model" class="form-control" id="exampleInputPassword1" placeholder="Password">
+     <p v-if="$v.password.$error" class="alert alert-danger">Password must be more than 6 symbols</p>
   </div>
   <div class="form-group">
     <label for="exampleInputPassword1">Repeat Password</label>
     <input type="password" v-model="$v.confirmPassword.$model" class="form-control" id="exampleInputPassword2" placeholder="Repeat Password">
+     <p v-if="$v.confirmPassword.$error" class="alert alert-danger">Passwords must match</p>
   </div>
-  <button @click.prevent="register()" type="submit" class="btn btn-primary">Register</button>
+  <button @click.prevent="register()" :disabled="$v.$invalid" type="submit" class="btn btn-primary">Register</button>
 </form>
   </div>
 </template>
 
 <script>
+const confirm = (value, vm) => (value == vm.password);
 import {required, email, minLength} from 'vuelidate/lib/validators'
 import{ registerUser } from '@/services/authServices'
    export default {
   name: 'register',
   data : function () {
     return {
-      mail: ""
+      mail: "",
+      message:""
     }
   },
   mixins:[registerUser]
   ,
   methods: {
       onRegister:function(){
-          this.register()
+          this.register();
       }
     },
     computed: {
@@ -69,17 +74,21 @@ import{ registerUser } from '@/services/authServices'
         }
     },
     mounted(){
+        this.$store.commit('loader', false)
     },
     validations:{
         password:{
-            required,
+            required:required,
+            minLength: minLength(6)
     
         },
         confirmPassword:{
             required,
+            confirm
         },
         username:{
-            required
+            required:required,
+            minLength: minLength(6)
         }
     }
 }

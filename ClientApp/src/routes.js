@@ -6,7 +6,6 @@ import Restaurant from './components/restorant/SingleRestorant';
 import Checkout from './components/restorant/Checkout';
 import myOrder from './components/restorant/Order';
 import VueRouter from 'vue-router';
-import {isAuthenticated} from './services/authServices';
 
 const routes = [
     {path:'/', redirect: '/home'},
@@ -26,8 +25,7 @@ export const router = new VueRouter({
 
   router.beforeEach((to,from,next)=>{
       if(to.path == '/showRestaurant' ||  to.path == '/checkout' || to.path == '/myOrder'){
-          console.log(isAuthenticated)
-          if(isAuthenticated){
+          if(localStorage.getItem('authtoken') !== null){
               next();
           }else{
               next('login');

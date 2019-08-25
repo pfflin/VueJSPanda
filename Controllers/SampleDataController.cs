@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft;
+using Newtonsoft.Json;
 
 namespace VueBackendPanda.Controllers
 {
@@ -15,15 +17,18 @@ namespace VueBackendPanda.Controllers
         };
 
         [HttpGet("[action]")]
-        public IEnumerable<WeatherForecast> WeatherForecasts()
+        public string WeatherForecasts()
         {
             var rng = new Random();
-            return Enumerable.Range(1, 5).Select(index => new WeatherForecast
-            {
-                DateFormatted = DateTime.Now.AddDays(index).ToString("d"),
-                TemperatureC = rng.Next(-20, 55),
-                Summary = Summaries[rng.Next(Summaries.Length)]
-            });
+            Response.Body.ToString();
+
+            return "commingFrom the right place";
+        }
+        [HttpGet("[action]")]
+        public string test()
+        {
+
+            return "commingFrom the right place";
         }
 
         public class WeatherForecast

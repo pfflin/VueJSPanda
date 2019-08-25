@@ -3,7 +3,7 @@
       <form>
   <div class="form-group">
     <label for="exampleInputEmail1">Username</label>
-    <input type="email" v-model="username" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter email">
+    <input type="email" v-model="username" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter username">
     
   </div>
   <div class="form-group">
@@ -24,6 +24,9 @@
              .then(r => {
                  console.log(r)
                  this.$router.push({path:'/home'})
+             })
+             .catch(e => {
+                 console.log(e)
              })
       }
     },

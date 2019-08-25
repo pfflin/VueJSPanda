@@ -27,7 +27,9 @@ export default {
     let that = this;
     this.$store.dispatch('getVarnaRestaurants')
     .then(r => {
-      this.$store.dispatch('getOrders')
+      if(this.authentication){
+      this.$store.dispatch('getOrders');
+      }
     });
    
     //chrome.exe --user-data-dir="C:/Chrome dev session" --disable-web-security
